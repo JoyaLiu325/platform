@@ -10,7 +10,7 @@ import com.hust.platform.model.Knowledge;
 @Mapper
 public interface KnowledgeDAO {
 	String tableName = " knowledge ";
-	String insertField = " name,summary,content,securityLevel,permission,status ";
+	String insertField = " name,summary,content,status ";
 	String selectField = " id, "+ insertField;
 	
 	/**
@@ -19,7 +19,7 @@ public interface KnowledgeDAO {
 	 * @return
 	 */
 	@Insert("insert into " + tableName + " ( "+ insertField + " ) " + "values(name=#{name},summary=#{summary},content=#{content},"
-			+ "securityLevel=#{securityLevel},permission=#{permission},status=#{status})")
+			+ "status=#{status})")
 	int addKnowledge(Knowledge knowledge);
 	
 	/**

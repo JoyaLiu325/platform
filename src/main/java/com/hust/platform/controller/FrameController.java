@@ -1,5 +1,6 @@
 package com.hust.platform.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -16,6 +17,8 @@ import com.hust.platform.model.FrameNode;
 import com.hust.platform.service.FrameService;
 import com.hust.platform.util.PlatformUtil;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 @Controller
 public class FrameController {
 	 private static final Logger log = LoggerFactory.getLogger(FrameController.class);
@@ -23,9 +26,45 @@ public class FrameController {
 	@Autowired
 	FrameService frameService;
 	
-	@RequestMapping(path = "/frame",method= {RequestMethod.GET})
-	public String frame(@RequestParam("pid") int pid,Model model) {
+	/**
+	 * 整体体系框架
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(path = {"/frame","/"},method= {RequestMethod.GET})
+	public String frame(Model model) {
 		return "frame";
+	}
+	
+	/**
+	 * 异步加载框架
+	 * @param pid
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(path = {"/frame/asynchro"},method= {RequestMethod.GET})
+	public String asynchroFrame(@RequestParam("pid") int pid,Model model) {
+		return "asynchroFrame";
+	}
+	
+	/**
+	 * 返回添加知识点页面
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(path = {"/frame/add"},method= {RequestMethod.GET})
+	public String addFrame(Model model) {
+		return "addFrame";
+	}
+	
+	/**
+	 * 返回删除知识点页面
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(path = {"/frame/delete"},method= {RequestMethod.GET})
+	public String deleteFrame(Model model) {
+		return "deleteFrame";
 	}
 	
 	/**
@@ -63,12 +102,12 @@ public class FrameController {
 		return PlatformUtil.getJsonString(999, nodeList);
 		}
 	
-	@RequestMapping(path = "/frame/test",method= {RequestMethod.GET})
-	public String frame() {
-		
-		log.info("访问frame框架");
-		return "frame";
-	}
+	@RequestMapping(path = "/frame/getNames",method= {RequestMethod.GET})
+	@ResponseBody
+	public String getNames(Model model) {
+		List<String> nodeList = frameService.getNodeName();
+		return PlatformUtil.getJsonString1(999, nodeList);
+		}
 	
 	/**
 	 * 添加节点
@@ -79,21 +118,36 @@ public class FrameController {
 	 */
 	@RequestMapping(path = "/frame/addNode",method= {RequestMethod.POST})
 	@ResponseBody
-	public String addNode(@RequestParam("nodeName") String nodeName,
-						  @RequestParam("pnodeName") String pnodeName,
-						  	Model model) {
-		int pid = frameService.selectByName(pnodeName).getId();
-		FrameNode node = new FrameNode();
-		node.setNodeName(nodeName);
-		node.setPid(pid);
-		node.setPnodeName(pnodeName);
-		if(frameService.addNode(node)>0) {
+	public String addNode(@RequestParam("_pnodeName[]") List<String> pNodelist,
+			@RequestParam("_nodeName[]") List<String> Nodelist, 
+			Model model) {
+		for(String str : pNodelist) {
+			System.out.println(str);
+		}
+		return PlatformUtil.getJsonString(999);
+/*		try {
+			List<FrameNode> nodeList = new ArrayList<>();
+			for(FrameNode node : list) {
+				System.out.println("nodeName:"+node.getNodeName());
+				System.out.println("pnodeName:"+node.getPnodeName());
+//				环路检测
+				String result = frameService.loopDetection(node.getPnodeName(), node.getNodeName());
+				if(result!=null)
+					return PlatformUtil.getJsonString(443,result);
+				int pid = frameService.selectByName(node.getPnodeName()).getId();
+				FrameNode _node = new FrameNode();
+				_node.setNodeName(node.getNodeName());
+				_node.setPid(pid);
+				_node.setPnodeName(node.getPnodeName());
+				nodeList.add(_node);
+				log.info("添加节点"+" "+"id:"+node.getId()+" "+"nodeName:"+node.getNodeName()+" "+"pnodeName:"+node.getPnodeName());
+			}
+			frameService.addNodes(nodeList);
 			return  PlatformUtil.getJsonString(999,"添加成功");
-		}
-		else 
+		} catch (Exception e) {
 			return PlatformUtil.getJsonString(444,"添加失败");
-		
-		}
+		}*/
+}
 	
 	/**
 	 * 删除节点
@@ -103,10 +157,12 @@ public class FrameController {
 	 */
 	@RequestMapping(path = "/frame/deleteNode",method= {RequestMethod.GET})
 	@ResponseBody
-	public String addNode(@RequestParam("nodeName") String nodeName,Model model) {
+	public String addNode(@RequestParam("_nodeName") String nodeName,Model model) {
 		if(frameService.deleteNode(nodeName)>0) 
 			return PlatformUtil.getJsonString(999,"删除成功");
 		else
 			return PlatformUtil.getJsonString(444,"删除失败");
 	}
+	
+	
 }

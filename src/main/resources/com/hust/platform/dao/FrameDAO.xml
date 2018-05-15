@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 相同包目录下定义xml文件,才能找到映射目录 -->
+<mapper namespace="com.hust.platform.dao.FrameDAO">
+	<insert id="addNodes" parameterType="java.util.List">
+		insert into frame (id,node_name,pid,pnode_name)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.id,jdbcType=INTEGER}, #{item.node_name,jdbcType=VARCHAR}, #{item.pid,jdbcType=INTEGER}, #{item.pnode_name,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+</mapper>

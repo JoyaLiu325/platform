@@ -33,12 +33,11 @@ public interface FrameDAO {
 	FrameNode selectById(int id);
 	
 	/**
-	 * 添加一个知识点
+	 * 添加多个知识点
 	 * @param frame
-	 * @return 成功，返回插入行所在的id；失败，返回0
+	 * @return 成功
 	 */
-	@Insert({"insert into "+ tableName + "(" + insertField +" ) values(#{nodeName},#{pid},#{pnodeName})"})
-	int addNode(FrameNode frame);
+	void addNodes(List<FrameNode> list);
 	
 	/**
 	 * 查询某一节点的儿子节点，可多次动态查询使用Ajax，提高每次查询效率
@@ -56,15 +55,27 @@ public interface FrameDAO {
 	@Select({"select "+ selectField + " from " + tableName + " where pnode_name=#{pnodeName} "})
 	List<FrameNode> getSubnodesByName(String pnodeName);
 	
-	@Select({"select id from " + tableName + "where pid=#{pid}"})
-	List<Integer> getSubId(int pid);
-	
 	@Select({"select node_name from " + tableName + " where pid=#{pid}"})
 	List<String> getSubNameByPid(int pid);
 	
+	/**
+	 * 根据父节点名字查找所有子节点
+	 * @param pnodeName
+	 * @return
+	 */
 	@Select({"select node_name from " + tableName + " where pnode_name=#{pnodeName}"})
 	List<String> getSubNameByPname(String pnodeName);
 	
+	/**
+	 * 根据子节点获取父节点名字
+	 * @param nodeName
+	 * @return
+	 */
+	@Select({"select pnode_name from " + tableName + " where node_name=#{nodeName}"})
+	List<String> getPnameBySubName(String nodeName);
+	
+	@Select({"select distinct node_name from " + tableName })
+	List<String> getNodeName();
 	
 	/**
 	 * 删除/恢复节点，status为0删除，status为1存在

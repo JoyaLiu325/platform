@@ -129,9 +129,13 @@ public class FrameService {
 		return nodeList;
 	}
 	
+	public List<String> getNodeName(){
+		return frameDAO.getNodeName();
+	}
+	
 //	添加节点
-	public int addNode(FrameNode node) {
-		return frameDAO.addNode(node);
+	public void addNodes(List<FrameNode> list) {
+		frameDAO.addNodes(list);
 	}
 // 删除节点
 	public int deleteNode(String nodeName ){
@@ -142,5 +146,31 @@ public class FrameService {
 		return frameDAO.selectByName(nodeName);
 	}
 	
+//	根据子节点获取父节点名字
+	public List<String> getPnameBySubName(String nodeName){
+		return frameDAO.getPnameBySubName(nodeName);
+	}
+	
+//	根据父节点名字获取子节点名字
+	public List<String> getSubNameByPname(String pnodeName){
+		return frameDAO.getSubNameByPname(pnodeName);
+	}
+	
+//	环路检测
+	public String loopDetection(String pnodeName,String nodeName) {
+		List<String> nodeList = new ArrayList<>();
+		nodeList = 	getSubNameByPname(nodeName);
+		Queue<String> nodeQueue = new LinkedList<String>(nodeList);
+		while(nodeQueue!=null && !nodeQueue.isEmpty()) {
+			String name = nodeQueue.poll();
+			if(!name.equals(pnodeName)) {
+				if((nodeList = getSubNameByPname(name)) != null)
+				nodeQueue.addAll(nodeList);
+			}
+			else
+				return "检测到"+pnodeName+"和"+nodeName+"存在环路";
+		}
+		return null;
+	}
 
 }

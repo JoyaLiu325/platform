@@ -1,0 +1,2 @@
+2018-05-05 20:09:10.634 [http-nio-8080-exec-6] INFO  com.hust.platform.controller.FrameController - 添加节点 id:23 nodeName: asdf
+2018-05-05 20:23:03.985 [http-nio-8080-exec-7] INFO  com.hust.platform.controller.FrameController - 添加节点 id:24 nodeName: ss

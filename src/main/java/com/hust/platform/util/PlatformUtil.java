@@ -29,4 +29,13 @@ public class PlatformUtil {
 		json.put("message", message);
 		return json.toJSONString();
 	}
+	
+	public static String getJsonString1(int code,List<String> list) {
+		JSONObject json = new JSONObject();
+		json.put("code", code);
+//		传入的列表不能转化为String，否则前端无法将JSONString转化为json对象
+		json.put("jsonList", list);
+		return json.toJSONString();
+	}
+	
 }
